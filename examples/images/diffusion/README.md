@@ -40,8 +40,7 @@ This project is in rapid development.
 ### Option #1: install from source
 #### Step 1: Requirements
 
-A suitable [conda](https://conda.io/) environment named `ldm` can be created
-and activated with:
+To begin with, make sure your operating system has the cuda version suitable for this exciting training session, which is cuda11.6/11.8. For your convience, we have set up the rest of packages here. You can create and activate a suitable [conda](https://conda.io/) environment named `ldm` :
 
 ```
 conda env create -f environment.yaml
@@ -57,7 +56,7 @@ pip install transformers diffusers invisible-watermark
 
 #### Step 2: install lightning
 
-Install Lightning version later than 2022.01.04. We suggest you install lightning from source.
+Install Lightning version later than 2022.01.04. We suggest you install lightning from source. Notice that the default download path of pip should be within the conda environment, or you may need to specify using 'which pip' and redirect the path into conda environment. 
 
 ##### From Source
 ```
@@ -74,9 +73,15 @@ pip install pytorch-lightning==2.0.0rc0
 
 #### Step 3:Install [Colossal-AI](https://colossalai.org/download/) From Our Official Website
 
-##### From pip
+You can install the latest version (0.2.7) from our official website or from source. Notice that the suitable version for this training is colossalai(0.2.5), which stands for torch(1.12.1).
 
-For example, you can install  v0.2.0 from our official website.
+##### Download suggested verision for this training
+
+```
+pip install colossalai=0.2.5
+```
+
+##### Download the latest version from pip for latest torch version
 
 ```
 pip install colossalai
@@ -92,10 +97,12 @@ cd ColossalAI
 CUDA_EXT=1 pip install .
 ```
 
-#### Step 3:Accelerate with flash attention by xformers(Optional)
+#### Step 4:Accelerate with flash attention by xformers(Optional)
+
+Notice that xformers will accelerate the training process in cost of extra disk space. The suitable version of xformers for this training process is 0.12.0. You can download xformers directly via pip. For more release versions, feel free to check its official website: [XFormers](./https://pypi.org/project/xformers/)
 
 ```
-pip install xformers
+pip install xformers==0.0.12
 ```
 
 ### Option #2: Use Docker
@@ -111,7 +118,7 @@ docker build -t hpcaitech/diffusion:0.2.0  .
 docker pull hpcaitech/diffusion:0.2.0
 ```
 
-Once you have the image ready, you can launch the image with the following command:
+Once you have the image ready, you can launch the image with the following command
 
 ```bash
 ########################
@@ -174,10 +181,9 @@ you should the change the `data.file_path` in the `config/train_colossalai.yaml`
 
 ## Training
 
-We provide the script `train_colossalai.sh` to run the training task with colossalai,
-and can also use `train_ddp.sh` to run the training task with ddp to compare.
+We provide the script `train_colossalai.sh` to run the training task with colossalai. Meanwhile, we have enlightened other training process such as DDP model in PyTorch. You can also use `train_ddp.sh` to run the training task with ddp to compare the corresponding performance.
 
-In `train_colossalai.sh` the main command is:
+In `train_colossalai.sh` the main command is
 
 ```
 python main.py --logdir /tmp/ --train --base configs/train_colossalai.yaml --ckpt 512-base-ema.ckpt
@@ -193,9 +199,10 @@ python main.py --logdir /tmp/ --train --base configs/train_colossalai.yaml --ckp
 
 You can change the trainging config in the yaml file
 
-- devices: device number used for training, default 8
-- max_epochs: max training epochs, default 2
-- precision: the precision type used in training, default 16 (fp16), you must use fp16 if you want to apply colossalai
+- devices: device number used for training, default = 8
+- max_epochs: max training epochs, default = 2
+- precision: the precision type used in training, default = 16 (fp16), you must use fp16 if you want to apply colossalai
+- placement_policy: the training strategy supported by Colossal AI, defult = 'cuda', which refers to loading all the parameters into cuda memory. On the other hand, 'cpu' refers to 'cpu offload' strategy while 'auto' enables 'Gemini', both featured by Colossal AI.
 - more information about the configuration of ColossalAIStrategy can be found [here](https://pytorch-lightning.readthedocs.io/en/latest/advanced/model_parallel.html#colossal-ai)
 
 
@@ -253,6 +260,19 @@ optional arguments:
   --precision {full,autocast}
                         evaluate at this precision
 ```
+
+## Invitation to open-source contribution
+Referring to the successful attempts of [BLOOM](https://bigscience.huggingface.co/) and [Stable Diffusion](https://en.wikipedia.org/wiki/Stable_Diffusion), any and all developers and partners with computing powers, datasets, models are welcome to join and build the Colossal-AI community, making efforts towards the era of big AI models!
+
+You may contact us or participate in the following ways:
+1. [Leaving a Star ⭐](https://github.com/hpcaitech/ColossalAI/stargazers) to show your like and support. Thanks!
+2. Posting an [issue](https://github.com/hpcaitech/ColossalAI/issues/new/choose), or submitting a PR on GitHub follow the guideline in [Contributing](https://github.com/hpcaitech/ColossalAI/blob/main/CONTRIBUTING.md).
+3. Join the Colossal-AI community on
+[Slack](https://join.slack.com/t/colossalaiworkspace/shared_invite/zt-z7b26eeb-CBp7jouvu~r0~lcFzX832w),
+and [WeChat(微信)](https://raw.githubusercontent.com/hpcaitech/public_assets/main/colossalai/img/WeChat.png "qrcode") to share your ideas.
+4. Send your official proposal to email contact@hpcaitech.com
+
+Thanks so much to all of our amazing contributors!
 
 ## Comments
 
